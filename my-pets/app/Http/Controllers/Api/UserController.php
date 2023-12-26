@@ -33,9 +33,9 @@ class UserController extends Controller
      * 
      * @return \Illuminate\Http\Response 
      */ 
-    // public function test(){
-    //     dd("work");
-    // }
+    public function test(){
+        dd("work");
+    }
     public function register(Request $request) 
     { 
         $validator = Validator::make($request->all(), [ 
