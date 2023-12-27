@@ -131,6 +131,27 @@ class UserController extends Controller
 
         return response()->json(['success' => $result], $this-> successStatus); 
     }
+    public function latestpetList(Request $request) 
+    { 
+
+        $petList = PetList::select('pet_lists.*','users.name')
+          ->leftJoin('users', 'pet_lists.user_id', '=', 'users.id')
+          ->orderBy('id', 'DESC')
+          ->limit(5)
+          ->get();
+
+        foreach($petList as $val){
+          $result[]=[
+            'image'=>asset('images/'.$val->image),
+            'user_name'=>$val->name,
+            'message'=>$val->message,
+            'type'=>$val->type,
+            'pet_name'=>$val->pet_name,
+          ];
+        }
+
+        return response()->json(['success' => $result], $this-> successStatus); 
+    }
     public function category(Request $request) 
     { 
 
