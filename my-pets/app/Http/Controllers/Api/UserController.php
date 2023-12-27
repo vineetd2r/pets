@@ -108,6 +108,7 @@ class UserController extends Controller
             'message'=>$petDetails->message,
             'type'=>$petDetails->type,
             'pet_name'=>$petDetails->pet_name,
+            'pet_id'=>$petDetails->id,
           );
 
         return response()->json(['success' => $result], $this-> successStatus); 
