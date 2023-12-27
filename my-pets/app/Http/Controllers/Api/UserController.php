@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User; 
 use App\Models\PetList; 
 use App\Models\category;
+use App\Models\adoptList;
 use Illuminate\Support\Facades\Auth; 
 use Validator;
  
@@ -167,6 +168,27 @@ class UserController extends Controller
         }
 
         return response()->json(['success' => $result], $this-> successStatus); 
+    }
+
+    public function addAdopt(Request $request) 
+    { 
+
+        $validator = Validator::make($request->all(), [ 
+            
+            'pet_id' => 'required',
+            'location'=> 'required',
+        ]);
+
+        if ($validator->fails()) { 
+             return response()->json(['error'=>$validator->errors()], 401);            
+        }      
+        $input = $request->all();
+        $user = Auth::user(); 
+
+        $input['user_id'] = $user->id;
+        $user = adoptList::create($input); 
+        $success['token'] =  $user->createToken('Mypets')-> accessToken; 
+        return response()->json(['success'=>$success], $this-> successStatus);
     }
 
     public function addCategory(Request $request) 

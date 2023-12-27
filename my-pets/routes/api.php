@@ -16,5 +16,6 @@ Route::post('add-category', [UserController::class, 'addCategory']);
 Route::group(['middleware' => 'auth:api'], function(){
     Route::post('user-details', [UserController::class, 'userDetails']);
     Route::post('add-pets', [UserController::class, 'addPets']);
+    Route::post('add-adopt', [UserController::class, 'addAdopt']);
     
 });
