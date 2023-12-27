@@ -126,6 +126,7 @@ class UserController extends Controller
             'message'=>$val->message,
             'type'=>$val->type,
             'pet_name'=>$val->pet_name,
+            'pet_id'=>$val->id,
           ];
         }
 
@@ -137,7 +138,7 @@ class UserController extends Controller
         $petList = PetList::select('pet_lists.*','users.name')
           ->leftJoin('users', 'pet_lists.user_id', '=', 'users.id')
           ->orderBy('id', 'DESC')
-          ->limit(5)
+          ->limit(6)
           ->get();
 
         foreach($petList as $val){
@@ -147,6 +148,7 @@ class UserController extends Controller
             'message'=>$val->message,
             'type'=>$val->type,
             'pet_name'=>$val->pet_name,
+            'pet_id'=>$val->id,
           ];
         }
 
