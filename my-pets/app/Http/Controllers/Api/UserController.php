@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User; 
 use App\Models\PetList; 
+use App\Models\category;
 use Illuminate\Support\Facades\Auth; 
 use Validator;
  
@@ -34,9 +35,7 @@ class UserController extends Controller
      * 
      * @return \Illuminate\Http\Response 
      */ 
-    public function test(){
-        dd("work");
-    }
+    
     public function register(Request $request) 
     { 
         $validator = Validator::make($request->all(), [ 
@@ -132,6 +131,38 @@ class UserController extends Controller
 
         return response()->json(['success' => $result], $this-> successStatus); 
     }
+    public function category(Request $request) 
+    { 
+
+        $category = category::get();
+        $result=[];
+        foreach($category as $val){
+          $result[]=[
+            'pet_type'=>$val->pet_type,
+          ];
+        }
+
+        return response()->json(['success' => $result], $this-> successStatus); 
+    }
+
+    public function addCategory(Request $request) 
+    { 
+        $validator = Validator::make($request->all(), [ 
+            'pet_type' => 'required',
+        ]);
+
+        if ($validator->fails()) { 
+             return response()->json(['error'=>$validator->errors()], 401);            
+        }      
+        $input = $request->all();
+
+        $user = category::create($input); 
+        $success['token'] =  $user->createToken('Mypets')-> accessToken;
+        return response()->json(['success'=>$success], $this-> successStatus); 
+    }
+
+
+
 
 
 

@@ -9,6 +9,8 @@ Route::get('test', [UserController::class, 'test']);
 Route::post('register', [UserController::class, 'register']);
 Route::post('pets-list', [UserController::class, 'petList']);
 Route::post('pets-details', [UserController::class, 'petDetails']);
+Route::post('category', [UserController::class, 'category']);
+Route::post('add-category', [UserController::class, 'addCategory']);
 
 Route::group(['middleware' => 'auth:api'], function(){
     Route::post('user-details', [UserController::class, 'userDetails']);
