@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User; 
+use App\Models\PetList; 
 use Illuminate\Support\Facades\Auth; 
 use Validator;
  
@@ -19,7 +20,7 @@ class UserController extends Controller
     public function login(){ 
         if(Auth::attempt(['email' => request('email'), 'password' => request('password')])){ 
             $user = Auth::user(); 
-            $success['token'] =  $user->createToken('MyLaravelApp')-> accessToken; 
+            $success['token'] =  $user->createToken('Mypets')-> accessToken; 
             $success['userId'] = $user->id;
             return response()->json(['success' => $success], $this-> successStatus); 
         } 
@@ -52,7 +53,7 @@ class UserController extends Controller
         $input = $request->all(); 
         $input['password'] = bcrypt($input['password']); 
         $user = User::create($input); 
-        $success['token'] =  $user->createToken('MyLaravelApp')-> accessToken; 
+        $success['token'] =  $user->createToken('Mypets')-> accessToken; 
         $success['name'] =  $user->name;
         return response()->json(['success'=>$success], $this-> successStatus); 
     }
@@ -67,5 +68,73 @@ class UserController extends Controller
         $user = Auth::user(); 
         return response()->json(['success' => $user], $this-> successStatus); 
     }
+
+    public function addPets(Request $request) 
+    { 
+        $validator = Validator::make($request->all(), [ 
+            'pet_name' => 'required',
+            'message' => 'required',
+            'image' => 'required|image',
+            'type'=> 'required',
+        ]);
+
+        if ($validator->fails()) { 
+             return response()->json(['error'=>$validator->errors()], 401);            
+        }      
+        $input = $request->all();
+        $user = Auth::user(); 
+
+        if($request->image){
+            $imageName = time().'image.'.$request->image->extension();
+            $request->image->move(public_path('images'), $imageName);
+        } 
+        $input['user_id'] = $user->id;
+        $input['image'] = $imageName; 
+        $user = PetList::create($input); 
+        $success['token'] =  $user->createToken('Mypets')-> accessToken; 
+        $success['name'] =  $user->pet_name;
+        return response()->json(['success'=>$success], $this-> successStatus); 
+    }
+
+    public function petDetails(Request $request) 
+    { 
+
+        $petDetails = PetList::select('pet_lists.*','users.name')
+          ->leftJoin('users', 'pet_lists.user_id', '=', 'users.id')
+          ->where('pet_lists.id',$request->pet_id)->first();
+
+          $result=array(
+            'image'=>asset('images/'.$petDetails->image),
+            'user_name'=>$petDetails->name,
+            'message'=>$petDetails->message,
+            'type'=>$petDetails->type,
+            'pet_name'=>$petDetails->pet_name,
+          );
+
+        return response()->json(['success' => $result], $this-> successStatus); 
+    }
+    public function petList(Request $request) 
+    { 
+
+        $petList = PetList::select('pet_lists.*','users.name')
+          ->leftJoin('users', 'pet_lists.user_id', '=', 'users.id')
+          ->get();
+
+        foreach($petList as $val){
+          $result[]=[
+            'image'=>asset('images/'.$val->image),
+            'user_name'=>$val->name,
+            'message'=>$val->message,
+            'type'=>$val->type,
+            'pet_name'=>$val->pet_name,
+          ];
+        }
+
+        return response()->json(['success' => $result], $this-> successStatus); 
+    }
+
+
+
+
 
 }

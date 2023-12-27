@@ -7,7 +7,13 @@ use App\Http\Controllers\Api\UserController;
 Route::post('login', [UserController::class, 'login']);
 Route::get('test', [UserController::class, 'test']);
 Route::post('register', [UserController::class, 'register']);
- 
+Route::post('pets-list', [UserController::class, 'petList']);
+Route::post('pets-details', [UserController::class, 'petDetails']);
+
 Route::group(['middleware' => 'auth:api'], function(){
- Route::post('user-details', [UserController::class, 'userDetails']);
+    Route::post('user-details', [UserController::class, 'userDetails']);
+    Route::post('add-pets', [UserController::class, 'addPets']);
+    
+    
+
 });
